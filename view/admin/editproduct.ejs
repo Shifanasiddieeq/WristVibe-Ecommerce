@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="/style/admin/editproduct.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <main>
+        <div class="page-content">
+            <h1 class="content-head">
+                <a href="/admin/products">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#666666">
+                        <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+                    </svg>
+                </a>
+                Edit Product
+            </h1>
+
+            <div class="form-container">
+                <form id="editProductForm" onsubmit="handleSubmit(event)" enctype="multipart/form-data">
+                    <div class="image-upload-container images">
+                        <% for (let i=0; i < 3; i++) { %>
+                            <div class="form-group image-controller">
+                                <img id="productImage<%= i + 1 %>"
+                                    src="<%= product.images && product.images[i] ? product.images[i] : 'https://via.placeholder.com/100' %>"
+                                    alt="Product Image <%= i + 1 %>" width="100">
+                                <input type="file" name="images" id="imageUpload<%= i + 1 %>" style="display: none;"
+                                    accept="image/*" onchange="previewImage(event, '<%= i + 1 %>')">
+                                <div class="upload-photo"
+                                    onclick="document.getElementById('imageUpload<%= i + 1 %>').click();">
+                                    Upload Photo <%= i + 1 %>
+                                </div>
+                            </div>
+                            <% } %>
+                    </div>
+
+                    <span id="imageError" style="color: red;"></span>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" placeholder="Product Name" name="productName"
+                                id="productName" value="<%= product.productName %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="brand" class="form-label">Brand</label>
+                            <input type="text" class="form-control" placeholder="Brand" name="brand" id="brand"
+                                value="<%= product.brand %>" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" placeholder="Price" name="price" id="price"
+                                value="<%= product.price %>" required>
+                            <div id="priceErrore" class="text-danger mt-2"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="color" class="form-label">Color</label>
+                            <input type="text" class="form-control" placeholder="Color" name="color" id="color"
+                                value="<%= product.color %>" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="stockCount" class="form-label">Stock Count</label>
+                            <input type="number" class="form-control" placeholder="Stock Count" name="stockCount"
+                                id="stockCount" value="<%= product.stockCount %>" required>
+                            <div id="stockErrore" class="text-danger mt-2"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Category</label>
+                            <select id="category" name="category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <% categories.forEach((category)=> { %>
+                                    <option value="<%= category._id %>"
+                                        <%=product.category.toString()===category._id.toString() ? 'selected' : '' %>>
+                                        <%= category.name %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea name="description" class="form-control" placeholder="Description" id="description"
+                            required><%= product.description %></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Crop Modal -->
+        <div id="cropModal" style="display: none;">
+            <div class="crop-container">
+                <img id="cropImage" src="">
+                <div class="crop-actions">
+                    <button onclick="cropImage()">Crop</button>
+                    <button onclick="closeCropModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('productName', document.getElementById('productName').value);
+            formData.append('brand', document.getElementById('brand').value);
+            formData.append('price', document.getElementById('price').value);
+            formData.append('color', document.getElementById('color').value);
+            formData.append('stockCount', document.getElementById('stockCount').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('description', document.getElementById('description').value);
+
+            const images = document.getElementsByName('images');
+            for (let i = 0; i < images.length; i++) {
+                console.log(images[i]);
+                if (images[i].files[0]) {
+                    formData.append(`images-${i}`, images[i].files[0]);
+                }
+            }
+
+            for (let i = 1; i <= 3; i++) {
+                const blob = imageBlobs[i];
+                if (blob) {
+                    formData.append('images', blob, `productImage${i}.png`);
+                }
+            }
+
+            try {
+
+                const response = await fetch(`/admin/editproduct/<%= product._id %>`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    window.location.href = '/admin/products';
+
+                } else {
+                    alert(data.message || 'Failed to submit product.');
+                }
+            } catch (error) {
+                console.error('Error found from fetch:', error);
+                alert('Failed to submit product.');
+            }
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        let cropper;
+        let currentImageNumber;
+        let imageBlobs = {};
+
+        function showCropper(event, imageNumber) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const cropImage = document.getElementById('cropImage');
+                    cropImage.src = e.target.result;
+
+                    currentImageNumber = imageNumber;
+
+                    document.getElementById('cropModal').style.display = 'flex';
+
+                    if (cropper) cropper.destroy();
+
+                    cropper = new Cropper(cropImage, { aspectRatio: 1, viewMode: 1 });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function cropImage() {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            croppedCanvas.toBlob(function (blob) {
+                if (blob) {
+                    imageBlobs[currentImageNumber] = blob;
+                }
+
+                const croppedImage = document.getElementById('productImage' + currentImageNumber);
+                croppedImage.src = croppedCanvas.toDataURL();
+                closeCropModal();
+            });
+        }
+
+        function closeCropModal() {
+            document.getElementById('cropModal').style.display = 'none';
+            if (cropper) cropper.destroy();
+        }
+
+
+        function previewImage(event, imageIndex) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const previewImage = document.getElementById(`productImage${imageIndex}`);
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+
+        function validatePrice() {
+            const priceInput = document.getElementById('price')
+            const priceError = document.getElementById('priceErrore')
+            const price = parseFloat(priceInput.value)
+
+            if (isNaN(price) || price < 0) {
+                priceError.textContent = 'Price cannot be negative or empty.';
+                priceInput.value = '';
+            } else {
+                priceError.textContent = '';
+            }
+        }
+
+        function validateStock() {
+            const stockInput = document.getElementById('stockCount');
+            const stockError = document.getElementById('stockErrore');
+            const stock = parseInt(stockInput.value, 10);
+
+            if (isNaN(stock) || stock < 0) {
+                stockError.textContent = 'Stock count cannot be negative or empty.';
+                stockInput.value = '';
+            } else {
+                stockError.textContent = '';
+            }
+        }
+
+
+        document.getElementById('price').addEventListener('input', validatePrice);
+        document.getElementById('stockCount').addEventListener('input', validateStock);
+
+
+        async function submitProduct(isEditMode, productId = null) {
+            const priceInput = document.getElementById('price');
+            const stockInput = document.getElementById('stockCount');
+
+            if (priceInput.value === '' || stockInput.value === '') {
+                alert('Please fix all validation errors before submitting.');
+                return;
+            }
+
+        }
+
+
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

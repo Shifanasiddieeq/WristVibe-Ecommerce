@@ -1,0 +1,88 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Body Styling */
+  body {
+    background-color: #f5f6fa;
+    color: #333;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  /* Sidebar Styling */
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(145deg, #5fa3a4, #5f717c);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Logo Styling */
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    color: #f1c40f;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Menu List Styling */
+  .menu {
+    list-style: none;
+    width: 100%;
+  }
+  
+  .menu li {
+    margin: 20px 0;
+  }
+  
+  .menu li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: block;
+    transition: background 0.3s, transform 0.2s;
+  }
+  
+  .menu li a:hover {
+    background: #f1c40f;
+    color: #2980b9;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .menu li a:active {
+    transform: scale(1.05);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 200px;
+    }
+  
+    .logo {
+      font-size: 20px;
+    }
+  
+    .menu li a {
+      font-size: 16px;
+      padding: 8px 16px;
+    }
+  }
+  

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details</title>
+  <link rel="stylesheet" href="/style/user/order.css">
+  <link rel="stylesheet" href="/style/user/sidebar.css">
+  <style>
+   
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.3s ease;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 30px;
+  border-radius: 8px;
+  width: 70%;
+  max-height: 80%;
+  overflow-y: auto; /* Makes modal content scrollable */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.modal-body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 30px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+}
+
+.order-section {
+  margin-bottom: 20px;
+}
+
+.order-section h3 {
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.order-section p {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.pending {
+  background-color: #f39c12;
+  color: white;
+}
+
+.shipped {
+  background-color: #3498db;
+  color: white;
+}
+
+.delivered {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.cancelled {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.returned {
+  background-color: #9b59b6;
+  color: white;
+}
+
+/* Table Styling */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.order-table th, .order-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+.order-table th {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.order-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.order-table td img {
+  width: 50px;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effects */
+.order-section table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .order-section h3 {
+    font-size: 16px;
+  }
+
+  .order-section th, .order-section td {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .order-section td img {
+    width: 40px;
+  }
+}
+
+  </style>
+  <style>
+    .invoice-btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    #invoice-btn:hover {
+      background-color: #45a049;
+    }
+    .view-btn {
+      background-color: #ff4a4a;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .view-btn:hover {
+      background-color: #ff4a4a;
+    }
+
+
+    /* Modal container styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.3s ease;
+}
+
+/* Modal content styling */
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 70%;
+  max-height: 80%;
+  overflow-y: auto; 
+  position: relative; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Close button styling */
+.close {
+  position: absolute; 
+  top: 10px; 
+  right: 15px; 
+  font-size: 24px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+}
+
+/* Modal header styling */
+.modal-content h2 {
+  text-align: center;
+  margin-top: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+/* Responsiveness */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .close {
+    font-size: 20px;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+  <div>
+    <%- include('partial/sidebar') %>
+  </div>
+  <div class="main-content">
+    <div class="order-container">
+      <h1>Order Details</h1>
+      <table>
+        <thead>
+          <tr>
+        
+            <th>Order Date</th>
+            <th>Products</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+          <% orders.forEach(order=> { %>
+            <tr>
+              <td>
+                <%= new Date(order.createdAt).toISOString().split('T')[0] %>
+              </td>
+              <td>
+                <% order.products.forEach(product=> { %>
+                  <div style="margin-bottom: 10px;">
+                    <img src="<%= product.image %>" alt="<%= product.productName %>"
+                      style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;" />
+                    <span>
+                      <%= product.productName %>(<%= product.quantity %>)
+                    </span>
+                  </div>
+                  <% }) %>
+              </td>
+              <td>
+                <%= order.totalPrice %>
+              </td>
+              <td class="status-column" id="status-<%= order._id %>">
+                <%= order.status %>
+              </td>
+              <td>
+                <% if(order.status !=='Cancelled' && order.status !=='Delivered' && order.status !=='Returned' ) { %>
+             
+                  <%if(order.paymentStatus==='Failed'){ %>
+                    <button class="cancel-btn"
+                      onclick="retryPayment('<%= order._id %>',' <%= order.totalPrice %>')">Retry Payment</button>
+                    <%}else{%>
+                      <button class="cancel-btn" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
+                      <%}%>
+                        <% } else if(order.status==='Delivered' ){ %>
+                          <% if(order.request.requested){ %>
+                            <button id="retn-req-<%= order._id %>" class="return-btn">Return requested</button>
+                            <% } else { %>
+                              <button id="retn-btn-<%= order._id %>" class="cancel-btn"
+                                onclick="returnOrder('<%= order._id %>')">Return Order</button>
+                              <% } %>
+                                <% } else { %>
+
+                                  <% } %>
+                                    <button id="view-<% order._id %>" class="view-btn"
+                                      onclick="viewOrderDetails('<%= order._id %>')">View</button>
+                                 
+                                    <% if (order.status==='Delivered' ) { %>
+                                      <button id="invoice-btn-<%= order._id %>" class="invoice-btn"
+                                        data-order-id="<%= order._id %>">Invoice</button>
+                                      <% } %>
+
+              </td>
+            </tr>
+            <% }) %>
+        </tbody>
+
+
+      </table>
+
+
+  
+
+      <div id="orderModal" class="modal">
+        <div class="modal-content">
+     
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h2>Order Details</h2>
+          <div id="orderDetails"></div>
+        </div>
+      </div>
+      
+
+
+      <div class="pagination">
+        <% if (currentPage> 1) { %>
+          <a href="?page=<%= currentPage - 1 %>">Previous</a>
+          <% } %>
+
+            <% for (let i=1; i <=totalPages; i++) { %>
+              <a href="?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                <%= i %>
+              </a>
+              <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                  <a href="?page=<%= currentPage + 1 %>">Next</a>
+                  <% } %>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  </tbody>
+  </table>
+  </div>
+  </div>
+  <script>
+    document.querySelectorAll('.invoice-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const orderId = this.getAttribute('data-order-id');
+        const url = `/invoice/${orderId}`;
+
+      
+        fetch(url)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch the invoice');
+            }
+            return response.blob();
+          })
+          .then(blob => {
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `invoice-${orderId}.pdf`;
+            link.click();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to download the invoice. Please try again.');
+          });
+      });
+    });
+
+  </script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    function retryPayment(orderId, totalPrice) {
+      axios.post('/checkout/razorpay', { totalPrice })
+        .then(response => {
+          const data = response.data
+          console.log(data.id, data.amount);
+
+          const options = {
+            key: "rzp_test_aLHubBFPpRXabc",
+            amount: data.amount * 100,
+            currency: data.currency,
+            name: "Your Shop",
+            description: "Purchase Description",
+            order_id: data.id,
+            handler: async (response) => {
+              console.log(response.razorpay_signature);
+
+              axios.post('/verify-payment', response)
+                .then(res => {
+                  if (res.status) {
+
+
+                    axios.post('/retry-payment', { orderId })
+                      .then(resp => {
+                        console.log(resp);
+
+                        if (resp.data.success) {
+                          console.log('kkk');
+
+                          location.reload()
+                        }
+
+                      })
+                  }
+                })
+            },
+          }
+          const razorpay = new Razorpay(options);
+          razorpay.open()
+
+        })
+    }
+
+  </script>
+
+
+  <script>
+    function viewOrderDetails(orderId) {
+      fetch(`/orders/${orderId}`)
+        .then(response => response.json())
+        .then(data => {
+          const orderDetailsDiv = document.getElementById('orderDetails');
+          orderDetailsDiv.innerHTML = `
+            <div class="order-section">
+              <h3>Order ID:</h3><p>${data._id}</p>
+            </div>
+            <div class="order-section">
+              <h3>Status:</h3><p class="status ${data.status.toLowerCase()}">${data.status}</p>
+            </div>
+            <div class="order-section">
+              <h3>Total Price:</h3><p>₹${data.totalPrice}</p>
+            </div>
+            <div class="order-section">
+              <h3>Payment Status:</h3><p>${data.paymentStatus}</p>
+            </div>
+            <div class="order-section">
+              <h3>Payment Method:</h3><p>${data.paymentMethod}</p>
+            </div>
+            <div class="order-section">
+              <h3>Coupon Discount:</h3><p>₹${data.couponDiscount || 0}</p>
+            </div>
+            <div class="order-section">
+              <h3>Customer Details:</h3>
+              <table class="order-table">
+                <tr><th>Name</th><td>${data.customer.userName}</td></tr>
+                <tr><th>Email</th><td>${data.customer.email}</td></tr>
+              </table>
+            </div>
+            <div class="order-section">
+              <h3>Address:</h3>
+              <table class="order-table">
+                <tr><th>House No</th><td>${data.customer.address.houseNo}</td></tr>
+                <tr><th>Area</th><td>${data.customer.address.area}</td></tr>
+                <tr><th>Landmark</th><td>${data.customer.address.landmark}</td></tr>
+                <tr><th>Town</th><td>${data.customer.address.town}</td></tr>
+                <tr><th>State</th><td>${data.customer.address.state}</td></tr>
+                <tr><th>Pincode</th><td>${data.customer.address.pincode}</td></tr>
+              </table>
+            </div>
+            <div class="order-section">
+              <h3>Products:</h3>
+              <table class="order-table">
+                <thead>
+                  <tr><th>Product Name</th><th>Price</th><th>Quantity</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+                  ${data.products.map(product => `
+                    <tr>
+                      <td>${product.productName}</td>
+                      <td>₹${product.price}</td>
+                      <td>${product.quantity}</td>
+                      <td>₹${product.total}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div class="order-section">
+              <h3>Return Request:</h3>
+              <p><strong>Requested:</strong> ${data.request.requested ? 'Yes' : 'No'}</p>
+              ${data.request.requested ? `
+                <p><strong>Request Name:</strong> ${data.request.requestname}</p>
+                <p><strong>Reason:</strong> ${data.request.reason}</p>
+                <p><strong>Approved:</strong> ${data.request.approve ? 'Yes' : 'No'}</p>
+              ` : ''}
+            </div>
+          `;
+          openModal();
+        })
+        .catch(error => console.error('Error fetching order details:', error));
+    }
+  
+    function openModal() {
+      document.getElementById('orderModal').style.display = 'block';
+    }
+  
+    function closeModal() {
+      document.getElementById('orderModal').style.display = 'none';
+    }
+  </script>
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+  <script>
+
+    async function cancelOrder(orderId) {
+      try {
+        const response = await axios.put(`/orders/cancel/${orderId}`, {}, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.status === 200) {
+          alert(response.data.message);
+          location.reload();
+        } else {
+          alert(response.data.error || 'Failed to cancel the order.');
+        }
+      } catch (error) {
+        console.error('Error cancelling order:', error);
+        alert(error.response?.data?.error || 'Something went wrong. Please try again.');
+      }
+    }
+
+    async function returnOrder(orderId) {
+      try {
+        const returnReasons = [
+          'Product damaged',
+          'Product not as described',
+          'Changed my mind',
+          'Wrong item received',
+          'Other'
+        ];
+
+        const { value: reason } = await Swal.fire({
+          title: 'Reason for Return',
+          input: 'select',
+          inputOptions: {
+            '': 'Select a reason',
+            ...returnReasons.reduce((options, reason) => {
+              options[reason] = reason;
+              return options;
+            }, {})
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Submit',
+          cancelButtonText: 'Cancel',
+          inputValidator: (value) => {
+            if (!value) {
+              return 'Please select a reason for the return!';
+            }
+          }
+        });
+
+        if (reason) {
+          const response = await axios.put(`/orders/return/${orderId}`, { reason });
+
+
+          if (response.data.success) {
+
+            Swal.fire({
+              title: 'Success',
+              text: response.data.message,
+              icon: 'success',
+              confirmButtonText: 'OK'
+            })
+
+              .then(resp => {
+                location.reload()
+              })
+
+
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: response.data.message,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        }
+      } catch (error) {
+        Swal.fire({
+          title: 'Error',
+          text: 'An error occurred while requesting the return.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    }
+
+  </script>
+  <style>
+    .pagination {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .pagination a {
+      margin: 0 5px;
+      padding: 8px 12px;
+      text-decoration: none;
+      background-color: #f0f0f0;
+      color: #333;
+      border-radius: 4px;
+    }
+
+    .pagination a.active {
+      font-weight: bold;
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .pagination a:hover {
+      background-color: #ddd;
+    }
+  </style>
+
+</body>
+
+</html>

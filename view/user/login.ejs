@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrist Vibe - Login</title>
+    <link rel="stylesheet" href="/style/user/login.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <img src="/style/user/login_img.png" alt="Smartwatch">
+        </div>
+        <div class="login-right">
+            <h1 class="brand">Wrist Vibe</h1>
+
+
+            <p>Do not have an account? <a href="/register">Create an account</a></p>
+            <form class="login-form" method="post" action="/login" onsubmit="return validateForm()">
+                <input type="email" name="email" id="email" placeholder="Email">
+                <span id="email-error" class="error-message"></span>
+
+                <input type="password" name="password" id="password" placeholder="Password">
+                <span id="password-error" class="error-message"></span>
+
+                <div class="login-options">
+
+                    <a href="/forgotPassword" class="forgot-password">Forgot password?</a>
+                </div>
+                <span style="color: red;">
+                    <%= error %>
+                </span>
+                <button type="submit" class="login-btn">Sign in</button>
+            </form>
+            <div class="divider">or continue with</div>
+            <div class="social-login">
+                <button onclick="window.location.href='/auth/google'" class="google-btn">
+                    <img src="https://cdn.cdnlogo.com/logos/g/35/google-icon.svg" alt="Google Icon"
+                        style="width: 20px; margin-right: 10px;">
+                    Sign in with Google
+                </button>
+            </div>
+            <button onclick='demoLogin()' class="login-btn">Demo Login</button>
+        </div>
+    </div>
+
+
+    <script src="/script/user/login.js"></script>
+
+    <script>
+        const data = { email: 'demo@gmail.com', password: 'Demo@123' };
+        async function demoLogin() {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            if (response.ok) window.location.href = '/home'
+        }
+    </script>
+
+    <style>
+        .error-message {
+            color: r7;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</body>
+
+</html>

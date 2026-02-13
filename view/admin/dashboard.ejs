@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style/admin/dashboard.css">
+  <link rel="stylesheet" href="/style/admin/sidebar1.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+   <div> <%- include('partials/sidebar') %></div>
+
+    <main class="main-content">
+      <header class="topbar">
+        <input type="text" placeholder="Search" class="search-bar">
+        <div class="user-options">
+          <span>Admin</span>
+          <form action="/admin/logout" method="POST">
+            <button type="submit" class="logout-btn">Logout</button>
+          </form>
+        </div>
+      </header>
+
+      <section class="dashboard">
+        <h1>Dashboard</h1>
+
+        <!-- Filter Section -->
+        <div>
+          <label for="filter">Filter:</label>
+          <select id="filter">
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+
+        <canvas id="salesRevenueChart"></canvas>
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        
+
+        <h2>Top Selling Products</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Quantity Sold</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <% bestProducts.forEach(product=> { %>
+              <tr>
+                <td>
+                  <%= product.productName %>
+                </td>
+                <td>
+                  <%= product.quantity %>
+                </td>
+              </tr>
+              <% }) %>
+
+          </tbody>
+        </table>
+        <h2>Top Selling Categories</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Category Name</th>
+              <th>Quantity Sold</th>
+            </tr>
+          </thead>
+          <tbody>
+              <% bestSellingCategory.forEach(category=> { %>
+                <tr>
+                  <td>
+                    <%= category.categoryName %>
+                  </td>
+
+                  <td>
+                    <%= category.quantity %>
+                  </td>
+                </tr>
+                <% }) %>
+
+          </tbody>
+        </table>
+
+        <h2>Top Selling Brands</h2>
+        <table>
+          <thead>
+            <tr>
+
+              <th>Brand Name</th>
+              <th>Quantity Sold</th>
+            </tr>
+          </thead>
+          <tbody>
+              <% bestSellingBrand.forEach(brand=> { %>
+                <tr>
+                  <td>
+                    <%= brand.brandName %>
+                  </td>
+                  <td>
+                    <%= brand.quantity %>
+                  </td>
+                </tr>
+                <% }) %>
+          </tbody>
+        </table>
+
+      </section>
+    </main>
+  </div>
+
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    
+      const salesData = JSON.parse('<%- salesData %>');
+      console.log('Initial sales data:', salesData); 
+  
+     
+      let salesRevenueChart; 
+      getChart(salesData);
+  
+    
+      function getChart(chartData) {
+        const labels = Object.keys(chartData);
+        const data = Object.values(chartData);
+  
+        const canvas = document.getElementById('salesRevenueChart');
+        if (!canvas) {
+          console.error('Canvas element not found'); 
+          return;
+        }
+  
+        const ctx = canvas.getContext('2d');
+  
+        if (salesRevenueChart) {
+          salesRevenueChart.destroy();
+        }
+  
+        salesRevenueChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Amount',
+              data: data,
+              backgroundColor: ['#4e73df', '#1cc88a'],
+              borderColor: ['#4e73df', '#1cc88a'],
+              borderWidth: 1,
+            }],
+          },
+          options: {
+            responsive: true,
+          },
+        });
+      }
+  
+      const filterDropdown = document.getElementById('filter');
+      if (!filterDropdown) {
+        console.error('Filter element not found'); 
+        return;
+      }
+  
+      filterDropdown.addEventListener('change', (event) => {
+        const dates = event.target.value;
+        console.log('Selected filter:', dates); 
+  
+        axios.post('/admin/changeFilter', { dates })
+          .then((response) => {
+            if (response.data.changes) {
+              console.log('Filtered data received:', response.data.changes); 
+              getChart(response.data.changes); 
+            } else {
+              console.warn('No changes received in response'); 
+            }
+          })
+          .catch((error) => {
+            console.error('Error updating filter:', error); 
+          });
+      });
+    });
+  </script>
+  
+</body>
+
+</html>

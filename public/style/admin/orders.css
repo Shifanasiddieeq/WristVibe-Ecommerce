@@ -1,0 +1,144 @@
+/* Button Styling */
+.view-btn {
+    background-color: #ff4a4a;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .view-btn:hover {
+    background-color: #e03a3a;
+  }
+  
+  /* Pagination Styling */
+  .pagination {
+    margin: 30px 0;
+    text-align: center;
+  }
+  
+  .pagination a {
+    display: inline-block;
+    margin: 0 8px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .pagination a:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  /* Table Styling for Orders */
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .orders-table th,
+  .orders-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .orders-table th {
+    background-color: #f4f4f4;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .orders-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Order Status Badge Styling */
+  .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .status-badge.pending {
+    background-color: #ffc107;
+  }
+  
+  .status-badge.completed {
+    background-color: #28a745;
+  }
+  
+  .status-badge.cancelled {
+    background-color: #dc3545;
+  }
+  
+  /* Order Item Card Styling */
+  .order-item-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .order-item-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .order-item-card .order-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .order-item-card .order-details {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .order-item-card .order-details span {
+    font-weight: bold;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .orders-table th,
+    .orders-table td {
+      padding: 8px;
+      font-size: 14px;
+    }
+  
+    .pagination a {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  
+    .view-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+  }
+  

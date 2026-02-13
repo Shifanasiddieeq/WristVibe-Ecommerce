@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  <link rel="stylesheet" href="/style/admin/productsok.css">
+  <link rel="stylesheet" href="/style/admin/sidebar1.css">
+</head>
+
+<body>
+  <style>
+    .main-div{
+      margin-left: 30px;
+    }
+  </style>
+ 
+    <div> <%- include('partials/sidebar') %></div>
+
+    <div class="main-div">
+      <h1 style="margin-top: 15px;">Product Details</h1>
+
+      <button id="addButton" onclick="window.location.href='/admin/addproduct'">Add Product</button>
+
+
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th style="display: flex; justify-content: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(product=> { %>
+            <tr>
+              <td>
+                <% product.images.forEach(image=> { %>
+                  <img src="<%= image %>" alt="Product Image" style="width: 50px; height: 50px;">
+                  <% }) %>
+              </td>
+              <td>
+                <%= product.productName %>
+              </td>
+              <td>
+                <%= product.category.name %>
+              </td>
+              <td>₹<%= product.price.toFixed(2) %>
+              </td>
+              <td>
+                <%= product.stockCount %>
+              </td>
+              <td style="display: flex; justify-content: center;">
+                <button style="margin-right: 10px;" id="editButton"
+                  onclick="window.location.href='/admin/editproduct/<%= product._id %>'">Edit</button>
+
+                <button class="list-unlist-btn" data-id="<%= product._id %>"
+                  data-action="<%= product.isListed ? 'Unlist' : 'List' %>">
+                  <%= product.isListed ? 'Unlist' : 'List' %>
+                </button>
+              </td>
+            </tr>
+            <% }) %>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <% if (currentPage> 1) { %>
+          <a href="/admin/products?page=<%= currentPage - 1 %>">Previous</a>
+          <% } %>
+
+            <% for (let i=1; i <=totalPages; i++) { %>
+              <a href="/admin/products?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>">
+                <%= i %>
+              </a>
+              <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                  <a href="/admin/products?page=<%= currentPage + 1 %>">Next</a>
+                  <% } %>
+      </div>
+    </div>
+
+
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.querySelectorAll('.list-unlist-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const productId = this.getAttribute('data-id');
+        const action = this.getAttribute('data-action');
+
+        Swal.fire({
+          title: `Are you sure you want to ${action} this product?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: `Yes, ${action} it!`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/products/${productId}/list-unlist`;
+
+            document.body.appendChild(form);
+            form.submit();
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- CSS -->
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 50%;
+      border-radius: 10px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .pagination {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .pagination a {
+      display: inline-block;
+      margin: 0 5px;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      color: #333;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .pagination a.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .pagination a:hover {
+      background-color: #0056b3;
+      color: white;
+    }
+  </style>
+
+
+
+</body>
+
+</html>

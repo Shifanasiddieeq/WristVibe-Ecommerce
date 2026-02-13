@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="/style/admin/user.css"> 
+</head>
+<body>
+    <div class="admin-dashboard">
+      
+        <aside class="sidebar">
+            <h2>Wrist Vibe</h2>
+            <nav>
+                <ul>
+                    
+                    <li><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="/admin/products">Products</a></li>
+                    <li><a href="/admin/users">Users</a></li>
+                    <li><a href="/admin/categories">Category</a></li>
+                    <li><a href="/admin/admin-order">Order</a></li>
+                    <li><a href="/admin/coupon">Coupon</a></li>
+                    <li><a href="/admin/offer">Offer</a></li>
+                    <li><a href="/admin/salesReport">Sales Report</a></li> 
+            
+                   
+                </ul>
+            </nav>
+        </aside>
+
+        
+        <main class="content">
+            <header>
+                <h1>Users</h1>
+            </header>
+           
+            <section>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>PhoneNumber</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user => { %>
+                            <tr>
+                              
+                                <td><%= user.name %></td>
+                                <td><%= user.phone %></td>
+                                <td><%= user.email %></td>
+                                <td>
+                                    <% if (user.isBlocked) { %>
+                                        <button 
+                                            class="action-btn unblock-btn" 
+                                            onclick="updateUserStatus('<%= user._id %>', false)">
+                                            Unblock
+                                        </button>
+                                    <% } else { %>
+                                        <button 
+                                            class="action-btn block-btn" 
+                                            onclick="updateUserStatus('<%= user._id %>', true)">
+                                            Block
+                                        </button>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <% if (currentPage > 1) { %>
+                        <a href="/admin/users?page=<%= currentPage - 1 %>">Previous</a>
+                    <% } %>
+                
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="/admin/users?page=<%= i %>" 
+                           class="<%= i === currentPage ? 'active' : '' %>">
+                           <%= i %>
+                        </a>
+                    <% } %>
+                
+                    <% if (currentPage < totalPages) { %>
+                        <a href="/admin/users?page=<%= currentPage + 1 %>">Next</a>
+                    <% } %>
+                </div>
+            </section>
+        </main>
+
+
+        
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+      async function updateUserStatus(userId, block) {
+        const action = block ? 'Block' : 'Unblock';
+    
+        const result = await Swal.fire({
+          title: `Are you sure you want to ${action} this user?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: `Yes, ${action}!`,
+        });
+    
+        if (result.isConfirmed) {
+          try {
+           
+            const response = await axios.patch(`/admin/users/${userId}/status`, {
+              block: block,
+            });
+    
+            if (response.data.success) {
+              Swal.fire({
+                icon: 'success',
+                title: response.data.message,
+                showConfirmButton: false,
+                timer: 1500,
+              });
+    
+          
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Failed to update user status',
+                text: response.data.message || 'Something went wrong!',
+              });
+            }
+          } catch (error) {
+            console.error(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error updating user status',
+              text: error.message || 'An unexpected error occurred!',
+            });
+          }
+        }
+      }
+    </script>
+
+<style>
+.pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination a:hover {
+    background-color: #0056b3;
+    color: white;
+}
+</style>
+</body>
+</html>

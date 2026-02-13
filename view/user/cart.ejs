@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Shopping Cart</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            background-color: #343a40;
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 1rem;
+            margin-left: 15px;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffc107;
+        }
+
+        .navbar-nav .nav-link i {
+            font-size: 1.2rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 5px 15px;
+            width: 250px;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .search-box input::placeholder {
+            font-size: 0.9rem;
+        }
+
+        .search-box i {
+            color: #6c757d;
+        }
+
+        .navbar-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .navbar-icons i {
+            color: #ffffff;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+
+        .navbar-icons i:hover {
+            color: #ffc107;
+        }
+
+        .cart-header {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .cart-container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            width: 800px;
+        }
+
+        .product-img {
+            max-width: 100px;
+            border-radius: 5px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-outline-danger {
+            color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .order-summary {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .order-summary h5 {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+        }
+
+        .text-muted {
+            font-size: 0.9rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Wrist Vibe</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Shop</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search products...">
+                    </div>
+                    <div class="navbar-icons ms-3">
+                        <a href="/wishlist" class="me-3" title="Wishlist">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                        <a href="/cart" class="me-3" title="Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>
+                        <a href="/account" title="Account">
+                            <i class="fas fa-user-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Cart Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="content-head"><a href="/shop"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                        viewBox="0 -960 960 960" width="24px" fill="#666666">
+                        <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+                    </svg></a>Shopping Cart</h2>
+            <!-- <h1 class="cart-header">Shopping Cart</h1> -->
+
+        </div>
+
+        <!-- Cart Items Section -->
+        <div class="row">
+            <!-- Cart Products -->
+            <div class="col-lg-8">
+                <!-- Product Card -->
+                <% if (cart && cart.items.length> 0) { %>
+                    <% cart.items.forEach(item=> { %>
+                        <div class="cart-container mb-3" id="cart-item-<%= item.productId._id %>">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="<%= item.productId.images[0] || 'https://via.placeholder.com/150' %>"
+                                        alt="<%= item.productId.productName %>" class="product-img">
+
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>
+                                        <%= item.productId.productName %>
+                                    </h5>
+                                    <p class="text-muted">Color: <%= item.productId.color || 'N/A' %>
+                                    </p>
+
+
+                                </div>
+                                <div class="col-md-2">
+                                    <h6>Quantity:</h6>
+                                    <div style="display: flex; gap: 10px;">
+                                        <input style="width: 100px;" type="number" value="<%= item.quantity %>"
+                                            onkeydown="return false" min="1"
+                                            max="<%= Math.min(item.productId.stockCount,5)%>" class="form-control"
+                                            onchange="updateQuantity('<%= item.productId._id %>', this.value)">
+                                        <span id="total-price-<%= item.productId._id%>">Rs.<%=
+                                                item.totalPrice.toFixed(2)%></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button class="btn btn-outline-danger"
+                                        onclick="removeFromCart('<%= item.productId._id %>')"><i
+                                            class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <p class="text-center">Your cart is empty.</p>
+                                <% } %>
+            </div>
+
+
+        </div>
+
+        <!-- Order Summary -->
+        <% if (cart && cart.items.length> 0) { %>
+            <div class="col-lg-4">
+                <div class="order-summary">
+                    <h5>Order Summary</h5>
+                    <div class="summary-item">
+                        <span>Items :</span>
+                        <span>
+                            <%= cart.items.length %>
+                        </span>
+                    </div>
+
+
+                    <div class="summary-item">
+                        <span> Total Cart Price:</span>
+                        <span id="cart-totalprice">Rs.<%= cart.cartTotalPrice.toFixed(2)%></span>
+                    </div>
+                    <button id="checkoutButton" class="btn btn-danger w-100 mt-3">Proceed to Checkout</button>
+                </div>
+
+            </div>
+            <div class="text-center mt-4">
+                <a href="/home" class="footer-link">Continue Shopping</a>
+            </div>
+            <% } %>
+
+    </div>
+
+
+
+    <script>
+
+
+        async function updateQuantity(productId, newQuantity) {
+            try {
+                if (newQuantity < 1 || newQuantity > 5) {
+                    alert('Quantity must be between 1 and 5');
+
+                    return;
+                }
+
+
+                const response = await fetch(`/updateQuantity`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId, newQuantity }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+
+                    const totalPriceElement = document.querySelector(`#total-price-${productId}`);
+                    if (totalPriceElement) {
+                        totalPriceElement.innerText = `Rs. ${data.totalPrice.toFixed(2)}`;
+                    }
+
+
+                    const cartTotalElement = document.querySelector('#cart-totalprice');
+                    if (cartTotalElement) {
+                        cartTotalElement.innerText = `Rs. ${data.cartTotalPrice.toFixed(2)}`;
+                    }
+
+                } else {
+                    alert(data.message || 'Error updating quantity');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+
+        async function removeFromCart(productId) {
+            try {
+
+                const response = await fetch(`/removeFromCart`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // alert(data.message || 'Item removed from cart');
+
+
+                    const productElement = document.querySelector(`#cart-item-${productId}`);
+
+                    if (productElement) {
+                        productElement.remove();
+                    }
+
+
+                    const cartTotalElement = document.querySelector('#cart-totalprice');
+
+
+                    if (cartTotalElement) {
+                        cartTotalElement.innerText = `Rs. ${data.cartTotalPrice.toFixed(2)}`;
+                    }
+                } else {
+                    alert(data.message || 'Error removing item from cart');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong while removing the item.');
+            }
+        }
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+   
+<script>
+document.getElementById("checkoutButton").addEventListener("click", async function () {
+    try {
+      await axios.get('/proceedToCheckout')
+        .then(res => {
+          if (res.data.success) {
+            window.location.href = res.data.redirect;
+          }
+        });
+    } catch (error) {
+   
+      swal({
+        title: "Error!",
+        text: error.response?.data?.message || "Something went wrong. Please try again.",
+        icon: "error",
+        button: "Okay"
+      });
+    }
+  });
+</script>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

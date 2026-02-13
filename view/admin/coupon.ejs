@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management</title>
+    <link rel="stylesheet" href="/style/admin/coupon.css">
+    <link rel="stylesheet" href="/style/admin/sidebar1.css">
+</head>
+
+<body>
+    
+
+        <div> <%- include('partials/sidebar') %></div>
+
+   
+
+    <div class="main-content">
+
+
+        <h2>Coupon Management</h2>
+
+        <!-- Add Coupon Button -->
+        <button class="add-coupon-btn" onclick="openCouponModal()">Add Coupon</button>
+
+        <div class="coupon-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Coupon Code</th>
+                        <th>Discount Type</th>
+                        <th>Discount Amount</th>
+                        <th>Min Amount</th>
+                        <th>Usage Limit</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% coupons.forEach(function(coupon) { %>
+                        <tr>
+                            <td>
+                                <%= coupon.couponCode %>
+                            </td>
+                            <td>
+                                <%= coupon.discountType %>
+                            </td>
+                            <td>
+                                <%= coupon.discountAmount %>
+                            </td>
+                            <td>
+                                <%= coupon.minAmount %>
+                            </td>
+                    
+                            <td>
+                                <%= coupon.usageLimit %>
+                            </td>
+                            <td>
+                                <%= new Date(coupon.startDate).toLocaleDateString() %>
+                            </td>
+                            <td>
+                                <%= new Date(coupon.endDate).toLocaleDateString() %>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button id="editbutton" class="edit-btn-coupon"
+                                        onclick="openEditCouponModal('<%= coupon._id %>', '<%= coupon.couponCode %>', '<%= coupon.discountType %>', '<%= coupon.discountAmount %>', '<%= coupon.minAmount %>', '<%= coupon.usageLimit %>', '<%= coupon.startDate %>', '<%= coupon.endDate %>')">Edit</button>
+                                    <button class="delete-btn-coupon"
+                                        onclick="deleteCoupon('<%= coupon._id %>')">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Coupon Modal -->
+        <div style="display: none;" class="modal-coupon" id="couponModal">
+            <div class="modal-content-coupon">
+                <span class="close-coupon" onclick="closeModal()">&times;</span>
+                <h5 id="modalTitle">Add Coupon</h5>
+                <form id="couponForm">
+                    <input type="hidden" id="couponId" name="couponId">
+
+                    <label for="couponCode">Coupon Code:</label>
+                    <input type="text" id="couponCode" name="couponCode" oninput="validateCouponCode()">
+                    <div class="error-message" id="couponCodeError"></div>
+
+                    <label for="discountType">Discount Type:</label>
+                    <select id="discountType" name="discountType" onchange="discountChange()">
+                        <option value="">Select</option>
+                        <option value="Fixed Amount">Fixed Amount</option>
+                        <option value="Percentage">Percentage</option>
+                    </select>
+                    <div class="error-message" id="discountTypeError"></div>
+
+                    <label for="discountAmount" id="discountAmountLabel">Discount Amount:</label>
+                    <input type="number" id="discountAmount" name="discountAmount" placeholder="Enter amount" min="0"
+                        oninput="validateDiscountAmount()">
+                    <span id="discountAmountInlineError" style="color: red; font-size: 12px;"></span>
+                                    
+
+                    <label for="minAmount">Minimum Amount:</label>
+                    <input type="number" id="minAmount" name="minAmount" min="0" oninput="validateMinAmount()" />
+                    <div class="error-message" id="minAmountError" style="color: red; font-size: 12px;"></div>
+
+                    <label for="maxAmount">Usage Limit:</label>
+                    <input type="number" id="maxAmount" name="usageLimit" min="0" oninput="validateUsageLimit()" />
+                    <div class="error-message" id="maxAmountError" style="color: red; font-size: 12px;"></div>
+
+
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate">
+                    <div class="error-message" id="startDateError"></div>
+
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate">
+                    <div class="error-message" id="endDateError"></div>
+
+                    <button type="submit" class="submit-btn">Save Coupon</button>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Modal for Editing Coupons -->
+        <div class="modal-coupon" id="editCouponModal" style="display:none;">
+            <div class="modal-content-coupon">
+                <span class="close-coupon" onclick="closeEditModal()">&times;</span>
+                <h5 id="editModalTitle">Edit Coupon</h5>
+                <form id="editCouponForm">
+                    <input type="hidden" id="editCouponId" name="editCouponId">
+
+                    <label for="editCouponCode">Coupon Code:</label>
+                    <input type="text" id="editCouponCode" name="editCouponCode">
+                    <div class="error-message" id="editCouponCodeError"></div>
+
+                    <label for="editDiscountType">Discount Type:</label>
+                    <select id="editDiscountType" name="editDiscountType" onchange="editdiscountChange()">
+                        <option value="">Select</option>
+                        <option value="Fixed Amount">Fixed Amount</option>
+                        <option value="Percentage">Percentage</option>
+                    </select>
+                    <div class="error-message" id="editDiscountTypeError"></div>
+
+                    <label for="editDiscountAmount" id="editDiscountAmountLabel">Discount Amount:</label>
+                    <input type="number" id="editDiscountAmount" name="editDiscountAmount" placeholder="Enter amount"
+                        oninput="validateEditDiscountAmount()" min="0">
+                    <div class="error-message" id="editDiscountAmountError" style="color: red; font-size: 12px;"></div>
+
+                    <label for="editMinAmount">Minimum Amount:</label>
+                    <input type="number" id="editMinAmount" name="editMinAmount" oninput="validateEditMinAmount()"
+                        min="0">
+                    <div class="error-message" id="editMinAmountError" style="color: red; font-size: 12px;"></div>
+
+                    <label for="usageLimit">Usage Limit:</label>
+                    <input type="number" id="editMaxAmount" name="editUsageLimit" oninput="validateEditUsageLimit()"
+                        min="0">
+                    <div class="error-message" id="editMaxAmountError" style="color: red; font-size: 12px;"></div>
+
+
+                    <label for="editStartDate">Start Date:</label>
+                    <input type="date" id="editStartDate" name="editStartDate">
+                    <div class="error-message" id="editStartDateError"></div>
+
+                    <label for="editEndDate">End Date:</label>
+                    <input type="date" id="editEndDate" name="editEndDate">
+                    <div class="error-message" id="editEndDateError"></div>
+
+                    <button type="submit" class="submit-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="pagination">
+            <% if(currentPage>1){ %>
+                <a href="/admin/coupon?page=<%=currentPage-1 %>">Previous</a>
+                <% } %>
+                    <% for(let i=1 ; i<=totalPages ; i++){ %>
+                        <a href="/admin/coupon?page=<%=i %>" class="<%=i ===currentPage? 'active' : ''  %>">
+                            <%= i %>
+                        </a>
+                        <% } %>
+
+                            <% if(currentPage < totalPages) {%>
+                                <a href="/admin/coupon?page= <%= currentPage + 1 %> ">Next</a>
+
+                                <% } %>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/script/admin/couponscript.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+
+
+
+
+    function validateDiscountAmount() {
+        const discountType = document.getElementById('discountType').value;
+        const discountInput = document.getElementById('discountAmount');
+        const discountError = document.getElementById('discountAmountInlineError');
+        const discountValue = parseFloat(discountInput.value);
+
+        if (discountValue < 0) {
+            discountError.textContent = 'Discount amount cannot be negative.';
+            return false;
+        }
+
+        else if (discountType === 'Percentage' && discountValue > 50) {
+            discountError.textContent = 'Percentage discount cannot exceed 50%.';
+            return false;
+        }
+
+        else if (discountType === 'Fixed Amount' && discountValue > 1000) {
+            discountError.textContent = 'Fixed amount discount cannot exceed ₹1000.';
+            return false;
+        }
+
+        else {
+            discountError.textContent = '';
+            return true;
+        }
+    }
+
+    function discountChange() {
+        const discountType = document.getElementById('discountType').value;
+        const discountLabel = document.getElementById('discountAmountLabel');
+        const discountInput = document.getElementById('discountAmount');
+        const discountError = document.getElementById('discountAmountInlineError');
+
+        discountError.textContent = '';
+
+
+        if (discountType === 'Percentage') {
+            discountLabel.textContent = 'Discount Percentage:';
+            discountInput.placeholder = 'Enter percentage';
+            discountInput.setAttribute('max', '100');
+        } else if (discountType === 'Fixed Amount') {
+            discountLabel.textContent = 'Discount Amount:';
+            discountInput.placeholder = 'Enter amount';
+            discountInput.setAttribute('max', '1000');
+        } else {
+            discountLabel.textContent = 'Discount Amount:';
+            discountInput.placeholder = 'Enter amount';
+            discountInput.removeAttribute('max');
+        }
+    }
+
+
+    function validateMinAmount() {
+        const minAmountInput = document.getElementById('minAmount');
+        const minAmountError = document.getElementById('minAmountError');
+        const minValue = parseFloat(minAmountInput.value);
+
+        if (minValue < 0) {
+            minAmountError.textContent = 'Minimum amount cannot be negative.';
+            return false;
+        } else {
+            minAmountError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateUsageLimit() {
+        const maxAmountInput = document.getElementById('maxAmount');
+        const maxAmountError = document.getElementById('maxAmountError');
+        const usageLimitValue = parseFloat(maxAmountInput.value);
+
+        if (usageLimitValue < 0) {
+            maxAmountError.textContent = 'Usage limit cannot be negative.';
+            return false;
+        } else {
+            maxAmountError.textContent = '';
+            return true;
+        }
+    }
+</script>
+<script>
+
+
+
+    function editdiscountChange() {
+        const discountType = document.getElementById('editDiscountType').value;
+        const discountAmountLabel = document.getElementById('editDiscountAmountLabel');
+        const discountAmountInput = document.getElementById('editDiscountAmount');
+        const discountAmountError = document.getElementById('editDiscountAmountError');
+
+        if (discountType === 'Percentage') {
+            discountAmountLabel.textContent = 'Discount Percentage:';
+            discountAmountInput.placeholder = 'Enter percentage (max 50%)';
+            discountAmountInput.max = 50;
+        } else if (discountType === 'Fixed Amount') {
+            discountAmountLabel.textContent = 'Discount Amount:';
+            discountAmountInput.placeholder = 'Enter fixed amount';
+            discountAmountInput.max = 1000;
+        } else {
+            discountAmountLabel.textContent = 'Discount Amount:';
+            discountAmountInput.placeholder = 'Enter amount';
+            discountAmountInput.removeAttribute('max');
+        }
+
+
+        discountAmountError.textContent = '';
+        discountAmountInput.value = '';
+    }
+
+
+    function validateEditDiscountAmount() {
+        const discountType = document.getElementById('editDiscountType').value;
+        const discountAmountInput = document.getElementById('editDiscountAmount');
+        const discountAmountError = document.getElementById('editDiscountAmountError');
+        const discountValue = parseFloat(discountAmountInput.value);
+
+        let isValid = true;
+        if (discountType === 'Percentage') {
+            if (isNaN(discountValue) || discountValue < 0) {
+                discountAmountError.textContent = 'Discount percentage cannot be negative.';
+                isValid = false;
+            } else if (discountValue > 50) {
+                discountAmountError.textContent = 'Discount percentage cannot exceed 50%.';
+                isValid = false;
+            } else {
+                discountAmountError.textContent = '';
+            }
+        } else {
+            if (isNaN(discountValue) || discountValue < 0) {
+                discountAmountError.textContent = 'Discount amount cannot be negative.';
+                isValid = false;
+            } else if (discountValue > 1000) {
+                discountAmountError.textContent = 'Discount Amount cannot exceed 1000';
+                isValid = false;
+            } else {
+                discountAmountError.textContent = '';
+            }
+        }
+        return isValid;
+    }
+
+    function validateEditMinAmount() {
+        const minAmountInput = document.getElementById('editMinAmount');
+        const minAmountError = document.getElementById('editMinAmountError');
+
+        const minValue = parseFloat(minAmountInput.value);
+        if (isNaN(minValue) || minValue < 0) {
+            minAmountError.textContent = 'Minimum amount cannot be negative.';
+            return false;
+        } else {
+            minAmountError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateEditUsageLimit() {
+        const usageLimitInput = document.getElementById('editMaxAmount');
+        const usageLimitError = document.getElementById('editMaxAmountError');
+
+        const usageLimitValue = parseFloat(usageLimitInput.value);
+        if (isNaN(usageLimitValue) || usageLimitValue < 0) {
+            usageLimitError.textContent = 'Usage limit cannot be negative.';
+            return false;
+        } else {
+            usageLimitError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateDates() {
+        const startDate = document.getElementById('editStartDate').value;
+        const endDate = document.getElementById('editEndDate').value;
+        const startDateError = document.getElementById('editStartDateError');
+        const endDateError = document.getElementById('editEndDateError');
+
+        let isValid = true;
+        if (!startDate) {
+            startDateError.textContent = 'Start date is required.';
+            isValid = false;
+        } else {
+            startDateError.textContent = '';
+        }
+
+        if (!endDate) {
+            endDateError.textContent = 'End date is required.';
+            isValid = false;
+        } else if (new Date(endDate) < new Date(startDate)) {
+            endDateError.textContent = 'End date must be after start date.';
+            isValid = false;
+        } else {
+            endDateError.textContent = '';
+        }
+
+        return isValid;
+    }
+
+
+</script>
+
+
+
+
+<style>
+    .pagination {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .pagination a {
+        display: inline-block;
+        margin: 0 5px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        color: #333;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .pagination a.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination a:hover {
+        background-color: #0056b3;
+        color: white;
+    }
+</style>
+
+</html>

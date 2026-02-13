@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product</title>
+  <link rel="stylesheet" href="/style/admin/addproducts.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <main>
+
+    <div class="page-content">
+      <h1 class="content-head"><a href="/admin/products"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+            viewBox="0 -960 960 960" width="24px" fill="#666666">
+            <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+          </svg></a>Add Products</h1>
+
+      <div class="form-container">
+
+
+        <div class="image-upload-container">
+          <div class="form-group">
+            <img id="productImage1" src="/images/projectimages/image_addproduct.png" alt="Product Image 1">
+            
+            <input type="file" id="imageUpload1" style="display: none;" accept="image/*"
+              onchange="showCropper(event, 1)">
+            <div class="upload-photo" onclick="document.getElementById('imageUpload1').click();">Upload Photo 1</div>
+          </div>
+
+          <div class="form-group">
+            <img id="productImage2" src="/images/projectimages/image_addproduct.png" alt="Product Image 2">
+            
+            <input type="file" id="imageUpload2" style="display: none;" accept="image/*"
+              onchange="showCropper(event, 2)">
+            <div class="upload-photo" onclick="document.getElementById('imageUpload2').click();">Upload Photo 2</div>
+          </div>
+
+          <div class="form-group">
+            <img id="productImage3" src="/images/projectimages/image_addproduct.png" alt="Product Image 3">
+            
+            <input type="file" id="imageUpload3" style="display: none;" accept="image/*"
+              onchange="showCropper(event, 3)">
+            <div class="upload-photo" onclick="document.getElementById('imageUpload3').click();">Upload Photo 3</div>
+          </div>
+        </div>
+        <span id="imageError" style="color: red;"></span>
+
+        <div class="container mt-5">
+          <form>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="productName" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="productName" name="productName" placeholder="Product Name"
+                  onkeyup="validateName()">
+                <div id="nameErrore" class="text-danger mt-2"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="brand" class="form-label">Brand</label>
+                <input type="text" class="form-control" id="brand" name="brand" placeholder="Brand"
+                  onkeyup="validateBrand()">
+                <div id="brandErrore" class="text-danger mt-2"></div>
+              </div>
+            </div>
+
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" class="form-control" id="price" name="price" placeholder="Price"
+                  oninput="validatePrice()">
+                <div id="priceErrore" class="text-danger mt-2"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="color" class="form-label">Color</label>
+                <input type="text" class="form-control" id="color" name="color" placeholder="Color"
+                  onkeyup="validateColor()">
+                <div id="colorErrore" class="text-danger mt-2"></div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="stockCount" class="form-label">Stock Count</label>
+                <input type="number" class="form-control" id="stockCount" name="quantity" placeholder="Stock Count"
+                  oninput="validateStock()">
+                <div id="stockErrore" class="text-danger mt-2"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" required>
+                  <% categories.forEach(category=> { %>
+                    <option value="<%= category._id %>">
+                      <%= category.name %>
+                    </option>
+                    <% }) %>
+                </select>
+                <div id="categoryErrore" class="text-danger mt-2"></div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" name="description" placeholder="Description"
+                onkeyup="validateDescription()"></textarea>
+              <div id="DescriptionErrore" class="text-danger mt-2"></div>
+            </div>
+
+
+            <button type="button" class="btn btn-primary" id="submit-btn" onclick="submitProduct(false)">Add
+              Now</button>
+          </form>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+
+
+
+        <div id="cropModal">
+          <div class="crop-container">
+            <img id="cropImage" src="">
+            <div class="crop-actions">
+              <button onclick="cropImage()">Crop</button>
+              <button onclick="closeCropModal()">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+  </main>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+  <script>
+    let cropper;
+    let currentImageNumber;
+    let imageBlobs = {};
+
+    function showCropper(event, imageNumber) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const cropImage = document.getElementById('cropImage');
+          cropImage.src = e.target.result;
+
+
+          currentImageNumber = imageNumber;
+
+          document.getElementById('cropModal').style.display = 'flex';
+
+          if (cropper) {
+            cropper.destroy();
+          }
+
+          cropper = new Cropper(cropImage, { aspectRatio: 1, viewMode: 1 });
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+
+
+
+    function cropImage() {
+      const croppedCanvas = cropper.getCroppedCanvas();
+      croppedCanvas.toBlob(function (blob) {
+        if (blob) {
+          imageBlobs[currentImageNumber] = blob;
+        } else {
+          console.error('Failed to create Blob.');
+        }
+
+        const croppedImage = document.getElementById('productImage' + currentImageNumber);
+        croppedImage.src = croppedCanvas.toDataURL();
+        closeCropModal();
+      });
+    }
+
+    function closeCropModal() {
+      document.getElementById('cropModal').style.display = 'none';
+      cropper.destroy();
+    }
+
+    function validateName() {
+      const name = document.getElementById('productName').value;
+      const nameError = document.getElementById('nameErrore');
+
+      if (name.trim() === "") {
+        nameError.textContent = "Product Name cannot be empty!";
+        name.value = ''
+      } else {
+        nameError.textContent = "";
+      }
+    }
+
+    function validateBrand() {
+      const brand = document.getElementById('brand').value;
+      const brandError = document.getElementById('brandErrore');
+
+      if (brand.trim() === "") {
+        brandError.textContent = "Brand cannot be empty!";
+        brand.value = ''
+      } else {
+        brandError.textContent = "";
+      }
+    }
+
+    function validateColor() {
+      const color = document.getElementById('color').value;
+      const colorError = document.getElementById('colorErrore');
+
+      if (color.trim() === "") {
+        colorError.textContent = "Color cannot be empty!";
+        color.value = ''
+      } else {
+        colorError.textContent = "";
+      }
+    }
+
+    function validatePrice() {
+      const priceInput = document.getElementById('price')
+      const priceError = document.getElementById('priceErrore')
+      const price = parseFloat(priceInput.value)
+
+      if (isNaN(price) || price < 0) {
+        priceError.textContent = 'Price cannot be negative or empty.';
+        priceInput.value = '';
+      } else {
+        priceError.textContent = '';
+      }
+    }
+
+    function validateStock() {
+      const stockInput = document.getElementById('stockCount');
+      const stockError = document.getElementById('stockErrore');
+      const stock = parseInt(stockInput.value, 10);
+
+      if (isNaN(stock) || stock < 0) {
+        stockError.textContent = 'Stock count cannot be negative or empty.';
+        stockInput.value = '';
+      } else {
+        stockError.textContent = '';
+      }
+    }
+
+
+    function validateDescription() {
+      const description = document.getElementById('description').value;
+      const descriptionError = document.getElementById('DescriptionErrore');
+
+      if (description.trim() === "") {
+        descriptionError.textContent = "Description cannot be empty!";
+        description.value = ''
+      } else {
+        descriptionError.textContent = "";
+      }
+    }
+
+
+    document.getElementById('price').addEventListener('input', validatePrice);
+    document.getElementById('stockCount').addEventListener('input', validateStock);
+    document.getElementById('productName').addEventListener('input', validateName);
+    document.getElementById('brand').addEventListener('input', validateBrand)
+    document.getElementById('stockCount').addEventListener('input', validateStock);
+    document.getElementById('color').addEventListener('input', validateColor);
+    document.getElementById('description').addEventListener('input', validateDescription)
+
+
+    async function submitProduct(isEditMode, productId = null) {
+      const priceInput = document.getElementById('price');
+      const stockInput = document.getElementById('stockCount');
+      const name = document.getElementById('productName')
+
+
+      if (priceInput.value === '' || stockInput.value === '') {
+        alert('Please fix all validation errors before submitting.');
+        return;
+      }
+      if (name.value === '') {
+        alert('enter name')
+        return;
+      }
+
+    }
+
+    async function submitProduct(isEditMode, productId = null) {
+
+      const formData = new FormData();
+      formData.append('productName', document.getElementById('productName').value);
+      formData.append('brand', document.getElementById('brand').value);
+      formData.append('price', document.getElementById('price').value);
+      formData.append('color', document.getElementById('color').value);
+      formData.append('stockCount', document.getElementById('stockCount').value);
+      formData.append('category', document.getElementById('category').value);
+      formData.append('description', document.getElementById('description').value);
+
+
+      for (let i = 1; i <= 3; i++) {
+        const blob = imageBlobs[i];
+        if (blob) {
+          formData.append('images', blob, `productImage${i}.png`);
+        }
+      }
+
+      try {
+
+        const response = await fetch('/admin/products', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          window.location.href = '/admin/products';
+        } else {
+          alert(data.message || 'Failed to submit product.');
+        }
+      } catch (error) {
+        console.error('Error found from fetch:', error);
+        alert('Failed to submit product.');
+      }
+    }
+  </script>
+</body>
+
+</html>

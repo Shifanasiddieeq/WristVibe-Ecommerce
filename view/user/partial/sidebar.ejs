@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/style/user/sidebar.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <style>
+    a {
+      text-decoration: none; 
+    }
+
+  </style>
+
+  <!-- Top navigation bar -->
+  <nav class="top-nav">
+  
+    <a href="/cart" id="cart"><i class="fas fa-shopping-cart"></i> </a>
+    <a href="/wishlist" id="wishlist"><i class="fas fa-heart"></i> </a>
+    
+    <a href="/shop" id="shop">Shop</a>
+    <a href="/home" id="home">Home</a>
+  </nav>
+
+  <aside class="sidebar">
+      <div class="user-info">
+        <div class="profile-pic">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <a href="/shop"> <h2 class="user-name"><%= user.name %></h2></a>
+        <p class="user-email"><%= user.email %></p>
+      </div>
+      <nav class="sidebar-menu">
+        <!-- <h3>Manage Account</h3> -->
+        <ul>
+          <li><a href="/account" id="personal-info">Personal Info</a></li>
+          <li><a href="/address" id="address">Address</a></li>
+          <li><a href="/orders" id="orders">Orders</a></li>
+          <li><a href="/wallet" id="wallet">Wallet</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+
+        <!-- <h3>Customer Service</h3>
+        <ul>
+          <li><a href="#" id="help-center">Help Center</a></li>
+          <li><a href="#" id="terms">Terms & Conditions</a></li>
+        </ul> -->
+      </nav>
+  </aside>
+
+</body>
+</html>

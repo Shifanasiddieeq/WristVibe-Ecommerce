@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account - Wallet</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/style/user/wallet.css">
+  <link rel="stylesheet" href="/style/user/sidebar.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="sidebar-container">
+      <%- include('partial/sidebar') %>
+    </div>
+    
+    <div class="main-content">
+      <main class="account-page">
+        <h1 class="page-title">My Wallet</h1>
+  
+        <div class="content">
+          <section class="main-section">
+            <div class="wallet-header">
+              <h2>Wallet Balance</h2>
+            </div>
+  
+            <div class="wallet-balance">
+              <div class="balance-box">
+                <p>Current Balance</p>
+                <h3>₹<%= wallet.balance.toFixed(2) %></h3>
+              </div>
+            </div>
+            <%console.log(wallet)%>
+            <%console.log(transactions)%>
+  
+            <table class="transactions">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (transactions && transactions.length > 0) { %>
+                  <% transactions.forEach(transaction => { %>
+                    <tr>
+                      <td><%= new Date(transaction.date).toLocaleDateString() %></td>
+                      <td><%= transaction.type %></td>
+                      <td>₹<%= transaction.amount.toFixed(2) %></td>
+                      <td><%= transaction.description || "N/A" %></td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="4">No transactions available</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+  
+         
+            <div class="pagination">
+              <% if (currentPage > 1) { %>
+                <a href="/wallet?page=<%= currentPage - 1 %>">Previous</a>
+              <% } %>
+  
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <a href="/wallet?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>">
+                  <%= i %>
+                </a>
+              <% } %>
+  
+              <% if (currentPage < totalPages) { %>
+                <a href="/wallet?page=<%= currentPage + 1 %>">Next</a>
+              <% } %>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+
+<style>
+  .pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination a {
+  text-decoration: none;
+  color: #007bff;
+  padding: 8px 16px;
+  margin: 0 4px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+  background-color: #f1f1f1;
+}
+
+.pagination .active {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+
+.pagination a:disabled {
+  color: #ccc;
+  border-color: #ccc;
+}
+
+.pagination a:focus {
+  outline: none;
+}
+
+</style>
+
+ </body>
+</html>

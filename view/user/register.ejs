@@ -1,0 +1,166 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Wrist Vibe - Sign Up</title>
+      <link rel="stylesheet" href="/style/user/register.css">
+      
+      <style>
+        
+          .error-message {
+              color: red;
+              font-size: 12px;
+              display: none; 
+              margin-top: 5px;
+          }
+  
+        
+          .signup-container {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: center;
+              min-height: 100vh;
+              padding: 20px;
+          }
+  
+         
+          .signup-left img {
+              max-width: 100%;
+              height: auto;
+          }
+  
+         
+          .signup-right {
+              max-width: 400px;
+              width: 100%;
+              margin: 0 20px;
+          }
+  
+          .signup-right h1,
+          .signup-right h2 {
+              text-align: center;
+          }
+  
+          .signup-right p {
+              text-align: center;
+          }
+  
+          .signup-form {
+              display: flex;
+              flex-direction: column;
+              gap: 15px;
+          }
+  
+          .signup-form div {
+              display: flex;
+              flex-direction: column;
+              gap: 5px;
+          }
+  
+          .signup-form input {
+              padding: 10px;
+              font-size: 14px;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+          }
+  
+          .signup-btn {
+              padding: 10px;
+              font-size: 16px;
+              color: white;
+              background-color: #007BFF;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+          }
+  
+          .signup-btn:hover {
+              background-color: #0056b3;
+          }
+  
+          .divider {
+              text-align: center;
+              margin: 20px 0;
+          }
+  
+          .social-signup button {
+              width: 100%;
+              padding: 10px;
+              margin-bottom: 10px;
+              font-size: 14px;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+              cursor: pointer;
+          }
+  
+          .social-signup button:hover {
+              background-color: #f1f1f1;
+          }
+  
+          .help-link {
+              text-align: center;
+              display: block;
+              margin-top: 20px;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="signup-container">
+          <div class="signup-left">
+              <img src="/style/user/login_img.png" alt="Smartwatch">
+          </div>
+          <div class="signup-right">
+              <h1 class="brand">Wrist Vibe</h1>
+              <h2>Create an account</h2>
+              <p>Already have an account? <a href="/login">Sign in</a></p>
+              <form method = "POST"  class="signup-form" onsubmit="validateForm(event)">
+                  <div>
+                      <input type="text" placeholder="Name" name="name">
+                      <span class="error-message" id="name-error"></span>
+                  </div>
+                  <div>
+                      <input type="tel" placeholder="Phone Number" name="phone">
+                      <span class="error-message" id="phone-error"></span>
+                  </div>
+                  <div>
+                      <input type="email" placeholder="Email" name="email">
+                      <span class="error-message" id="email-error"></span>
+                  </div>
+                  <div>
+                      <input type="password" placeholder="Password" name="password">
+                      <span class="error-message" id="password-error"></span>
+                  </div>
+                  <div>
+                      <input type="password" placeholder="Confirm Password" name="confirm_password">
+                      <span class="error-message" id="confirm-password-error"></span>
+                  </div>
+       
+                  <div class="signup-options">
+               
+                  </div>
+                  <button type="submit" class="signup-btn">Create an account</button>
+              </form>
+              <div class="divider">or continue with</div>
+              <div class="social-signup">
+                  <button class="google-btn">Google</button>
+        
+              </div>
+              <a href="#" class="help-link">Need help?</a>
+          </div>
+      </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script src="/script/user/register.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </html>
+  
+  
+
+
+
+
+
+ 

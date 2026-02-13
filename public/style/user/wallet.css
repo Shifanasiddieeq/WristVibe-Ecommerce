@@ -1,0 +1,122 @@
+/* General Layout Adjustments */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  display: flex; /* Keep sidebar and content aligned side-by-side */
+  height: 100vh;
+}
+
+.sidebar {
+  flex: 0 0 270px; /* Sidebar takes 270px width */
+  height: 100vh;
+  background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
+}
+
+.main-content {
+  margin-left: 370px; /* Prevent overlap with sidebar */
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* overflow-y: auto;  */
+}
+
+header.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header.navbar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+header.navbar .menu a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #333;
+}
+
+header.navbar .icons a img {
+  width: 20px;
+  margin-left: 15px;
+}
+
+.breadcrumb {
+  background: #f9f9f9;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.page-title {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  padding: 1rem;
+}
+
+.wallet-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f0f8ff;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.wallet-balance .balance-box h3 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.add-money-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.transactions {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.transactions th,
+.transactions td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.transactions tbody td {
+  color: #999;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}

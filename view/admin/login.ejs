@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrist Vibe - Admin Login</title>
+    <link rel="stylesheet" href="/style/admin/login.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <h1 class="brand">Wrist Vibe</h1>
+            <form class="login-form" action="/admin/login" method="POST" onsubmit="return validateForm()">
+                <input type="email" id="email" name="email" placeholder="Email">
+                <span id="email-error" class="error-message"></span>
+
+                <input type="password" id="password" name="password" placeholder="Password">
+                <span id="password-error" class="error-message"></span>
+
+                <button type="submit" class="login-btn">Sign in</button>
+            </form>
+
+        </div>
+
+        <div class="login-right">
+            <img src="/style/admin/login_img.png" alt="Watch">
+        </div>
+    </div>
+    <script src="/script/admin/login.js"></script>
+
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</body>
+
+</html>

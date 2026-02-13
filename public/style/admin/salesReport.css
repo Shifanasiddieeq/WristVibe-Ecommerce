@@ -1,0 +1,125 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+    color: #333;
+  }
+  
+  .sales-report-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Filter Section */
+  .filter-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f1f1f1;
+    border-radius: 8px;
+  }
+  
+  .filter-section div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .filter-section label {
+    font-weight: bold;
+  }
+  
+  .filter-btn {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .filter-btn:hover {
+    background: #0056b3;
+  }
+  
+  /* Table Styles */
+  .sales-report-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .sales-report-section th,
+  .sales-report-section td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .sales-report-section th {
+    background: #f1f1f1;
+  }
+  
+  .sales-report-section td {
+    color: #555;
+  }
+  
+  /* Summary Section */
+  .summary-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .summary-card {
+    background: #f9f9f9;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    flex: 1;
+    margin: 0 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .summary-card h4 {
+    margin-bottom: 10px;
+  }
+  
+  .summary-card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  /* Download Buttons */
+  .download-buttons {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .download-btn {
+    background: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin: 5px;
+    cursor: pointer;
+  }
+  
+  .download-btn:hover {
+    background: #218838;
+  }
+  

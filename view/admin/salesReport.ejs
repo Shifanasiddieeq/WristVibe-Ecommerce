@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Report</title>
+    <link rel="stylesheet" href="/style/admin/salesReport.css" />
+  </head>
+
+  <body>
+    <div class="sales-report-container">
+      <h1 class="content-head">
+        <a href="/admin/dashboard">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#666666"
+          >
+            <path
+              d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"
+            />
+          </svg>
+        </a>
+        Sales Report
+      </h1>
+
+      <div class="filter-section">
+        <div class="frequency-filter">
+          <label for="frequency">Frequency:</label>
+          <select id="frequency" name="frequency" onchange="fetchSalesData()">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="custom">Custom Range</option>
+          </select>
+        </div>
+
+        <div id="date-range-inputs" style="display: none">
+          <label for="startDate">Start Date:</label>
+          <input type="date" id="startDate" name="startDate" />
+          <label for="endDate">End Date:</label>
+          <input type="date" id="endDate" name="endDate" />
+          <button onclick="applyDateRangeFilter(event)">Apply</button>
+        </div>
+
+        <div id="sales-report"></div>
+
+        <div class="download-buttons">
+          <button class="download-btn" onclick="downloadReport('pdf')">
+            Download PDF
+          </button>
+          <button class="download-btn" onclick="downloadReport('xlxs')">
+            Download Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-card">
+          <h4>Total Sales</h4>
+          <p id="totalSalesCount"><%= defaultReport.totalSales || 0 %></p>
+        </div>
+        <div class="summary-card">
+          <h4>Total Amount</h4>
+          <p id="totalOrderAmount">
+            ₹<%= defaultReport.totalAmount.toFixed(2) || "0.00" %>
+          </p>
+        </div>
+        <div class="summary-card">
+          <h4>Total Discount</h4>
+          <p id="totalDiscount">
+            ₹<%= defaultReport.totalDiscount || "0.00" %>
+          </p>
+        </div>
+      </div>
+
+      <div class="sales-report-section">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Date</th>
+              <th>Order ID</th>
+              <th>Customer Name</th>
+              <th>Total Amount</th>
+              <th>Coupon Discount</th>
+              <th>Offer Discount</th>
+            </tr>
+          </thead>
+          <tbody id="reportBody">
+            <% if (defaultReport.orders && defaultReport.orders.length> 0) { %>
+            <% defaultReport.orders.forEach((order,index)=> { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
+              <td><%= order._id %></td>
+              <td><%= order.customer.userName || "N/A" %></td>
+              <td>
+                ₹<%= order.totalPrice ? order.totalPrice.toFixed(2) : "0.00" %>
+              </td>
+              <td>
+                ₹<%= order.couponDiscount ? order.couponDiscount.toFixed(2) :
+                "0.00" %>
+              </td>
+              <td>
+                ₹<%= order.offerDiscount ? order.offerDiscount.toFixed(2) :
+                "0.00" %>
+              </td>
+            </tr>
+            <% }); %> <% } else { %>
+            <tr>
+              <td colspan="6">No data available</td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      document
+        .getElementById("frequency")
+        .addEventListener("change", () => toggleDateInputs());
+      document
+        .getElementById("startDate")
+        .addEventListener("change", () => validateCustomRange());
+      document
+        .getElementById("endDate")
+        .addEventListener("change", () => validateCustomRange());
+
+      function toggleDateInputs() {
+        const frequency = document.getElementById("frequency").value;
+        const dateRangeInputs = document.getElementById("date-range-inputs");
+
+        if (frequency === "custom") {
+          dateRangeInputs.style.display = "block";
+        } else {
+          dateRangeInputs.style.display = "none";
+        }
+      }
+
+      function validateCustomRange() {
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+
+        if (startDate && endDate) {
+          fetchSalesData();
+        }
+      }
+
+      function applyDateRangeFilter() {
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+
+        console.log(startDate, endDate);
+      }
+
+      function fetchSalesData() {
+        const frequency = document.getElementById("frequency").value;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+
+        console.log(startDate, endDate);
+
+        const params = { frequency };
+
+        if (frequency === "custom" && startDate && endDate) {
+          params.startDate = startDate;
+          params.endDate = endDate;
+        }
+
+        axios
+          .post("/admin/sales-report", params)
+          .then((response) => {
+            updateSalesReport(response.data);
+            console.log("Sales data updated successfully");
+          })
+          .catch((error) => {
+            console.error("Error fetching sales data:", error);
+            alert("Failed to fetch sales data. Please try again later.");
+          });
+      }
+
+      function updateSalesReport(data) {
+        document.getElementById("totalSalesCount").textContent =
+          data.totalSales || 0;
+        document.getElementById("totalOrderAmount").textContent = `₹${(
+          data.totalAmount || 0
+        ).toFixed(2)}`;
+        document.getElementById("totalDiscount").textContent = `₹${(
+          data.totalDiscount || 0
+        ).toFixed(2)}`;
+
+        const reportBody = document.getElementById("reportBody");
+        reportBody.innerHTML = "";
+
+        if (data.orders && data.orders.length > 0) {
+          data.orders.forEach((order) => {
+            const row = `
+            <tr>
+              <td>${new Date(order.orderDate).toLocaleDateString()}</td>
+              <td>${order._id}</td>
+              <td>${order.customer?.userName || "N/A"}</td>
+              <td>₹${(order.totalPrice || 0).toFixed(2)}</td>
+              <td>₹${(order.couponDiscount || 0).toFixed(2)}</td>
+              <td>₹${(order.offerDiscount || 0).toFixed(2)}</td>
+              <td>₹${(order.offerDiscount || 0).toFixed(2)}</td>
+            </tr>
+          `;
+            reportBody.innerHTML += row;
+          });
+        } else {
+          reportBody.innerHTML =
+            '<tr><td colspan="6">No data available</td></tr>';
+        }
+      }
+    </script>
+
+    <script>
+      function downloadReport(format) {
+        const frequency = document.getElementById("frequency").value;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+
+        axios
+          .post(
+            `/admin/sales-report/download/${format}`,
+            { frequency, startDate, endDate },
+            { responseType: "blob" }
+          )
+          .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `sales-report.${format}`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url); // Clean up URL object
+          })
+          .catch((error) => {
+            console.error(`Error downloading ${format}:`, error);
+            alert(`Failed to download ${format} file.`);
+          });
+      }
+    </script>
+  </body>
+</html>

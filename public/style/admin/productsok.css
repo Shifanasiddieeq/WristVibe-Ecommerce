@@ -1,0 +1,158 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Body Styling */
+body {
+  background-color: #f9f9f9;
+  color: #333;
+  display: flex;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+main {
+  display: flex;
+  width: 100%;
+}
+
+/* Content Styling */
+main > div {
+  flex: 1;
+  padding: 30px;
+  margin-left: 20px; /* Space added to the left */
+  margin-top: 20px;  /* Space added to the top */
+}
+
+main h1 {
+  font-size: 24px; /* Increased font size for better visibility */
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+/* Button Styling */
+button {
+  background-color: #294354;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+#addButton {
+  margin-bottom: 30px;
+  margin-left: 10px;
+  margin-top: 10px; /* Increased spacing below the add button */
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px; /* Space added above the table */
+ 
+}
+
+table thead {
+  background-color: #395263;
+  color: white;
+}
+
+table th, table td {
+  text-align: left;
+  padding: 15px; /* Increased padding for a more spacious look */
+}
+
+table th {
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+  background-color: #f2f2f2; /* Hover effect on rows for better interaction */
+}
+
+table img {
+  width: 60px; /* Increased image size */
+  height: 60px;
+  border-radius: 5px;
+}
+
+table td button {
+  background-color: #0fb253;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+/* list-unlist-btn */
+.list-unlist-btn {
+  padding: 12px 25px;
+  font-size: 14px;
+  color: white; /* Text color */
+  background-color: red; /* Red background */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10px; /* Space between buttons */
+}
+
+.list-unlist-btn:hover {
+  background-color: #ff6b6b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  main > div {
+    padding: 20px;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+
+  main h1 {
+    font-size: 22px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  table th, table td {
+    font-size: 12px;
+  }
+
+  table img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .list-unlist-btn, button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}

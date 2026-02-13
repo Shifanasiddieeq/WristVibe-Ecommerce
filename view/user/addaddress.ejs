@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Address</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .address-form-container {
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container address-form-container">
+        <h2 class="content-head">
+            <a href="/address">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+                    <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+                </svg>
+            </a>
+            Add Address
+        </h2>
+
+        <form id="addressForm" action="/save-address" method="POST">
+            <div class="form-group">
+                <label for="houseNo">Flat / House no. / Building:</label>
+                <input type="text" class="form-control" id="houseNo" name="houseNo" onkeyup="validateField('houseNo', 'House No cannot be empty!')" >
+                <div class="error-message" id="houseNoError"></div>
+            </div>
+            <div class="form-group">
+                <label for="area">Area / Street / Village:</label>
+                <input type="text" class="form-control" id="area" name="area" onkeyup="validateField('area', 'Area cannot be empty!')" >
+                <div class="error-message" id="areaError"></div>
+            </div>
+            <div class="form-group">
+                <label for="landmark">Landmark:</label>
+                <input type="text" class="form-control" id="landmark" name="landmark" onkeyup="validateField('landmark', 'Landmark cannot be empty!')">
+                <div class="error-message" id="landmarkError"></div>        
+            </div>
+            <div class="form-group">
+                <label for="town">Town / City:</label>
+                <input type="text" class="form-control" id="town" name="town" onkeyup="validateField('town', 'Town cannot be empty!')" >
+                <div class="error-message" id="townError"></div>
+            </div>
+            <div class="form-group">
+                <label for="pincode">Pincode:</label>
+                <input type="number" class="form-control" id="pincode" name="pincode" onkeyup="validatePincode()" >
+                <div class="error-message" id="pincodeError"></div>
+            </div>
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" class="form-control" id="state" name="state" onkeyup="validateField('state', 'State cannot be empty!')" >
+                <div class="error-message" id="stateError"></div>
+            </div>
+            <button type="submit" class="btn btn-success">Save Address</button>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='/address'">Cancel</button>
+        </form>
+    </div>
+
+ 
+
+    <script>
+        function validateField(fieldId, errorMessage) {
+            const input = document.getElementById(fieldId);
+            const errorElement = document.getElementById(`${fieldId}Error`);
+            const value = input.value.trim();
+        
+            
+            // const invalidStart = /^[*-+=@$!^#0]/; 
+            const invalidStart = /^[*=@$!^#0\-\+\(\)\[\]]/;
+
+            if (!value) {
+                errorElement.textContent = errorMessage;
+            } else if (value.length < 3) {
+                errorElement.textContent = errorMessage + " Minimum 3 characters required.";
+            } else if (invalidStart.test(value)) {
+                errorElement.textContent = errorMessage + " Cannot start with special characters or 0.";
+            } else if (fieldId === "houseNo" && value === "000") {
+                errorElement.textContent = "House No cannot be completely 0.";
+            } else {
+                errorElement.textContent = ""; 
+            }
+        }
+        
+    
+        function validatePincode() {
+            const pincodeInput = document.getElementById('pincode');
+            const pincodeError = document.getElementById('pincodeError');
+            const pincodeValue = pincodeInput.value.trim();
+            console.log('kk');
+            
+            if (!pincodeValue) {
+                pincodeError.textContent = 'Pincode cannot be empty!';
+                return false
+            }
+    
+            const pincodeRegex = /^\d{6}$/; 
+            if (!pincodeRegex.test(pincodeValue)) {
+                pincodeError.textContent = 'Pincode must be a 6-digit number!';
+                return false
+            } else if (pincodeValue.startsWith("0")) {
+                pincodeError.textContent = 'Pincode cannot start with 0.';
+                return false
+            } else {
+                pincodeError.textContent = ""; 
+                return true     
+            }
+            
+        }
+    
+       
+        const addressForm = document.getElementById('addressForm');
+        addressForm.addEventListener('submit', function (event) {
+            let isValid = true;
+    
+            const fields = [
+                { id: 'houseNo', message: 'House No cannot be empty!' },
+                { id: 'area', message: 'Area cannot be empty!' },
+                { id: 'landmark', message: 'Landmark cannot be empty!' },
+                { id: 'town', message: 'Town cannot be empty!' },
+                { id: 'state', message: 'State cannot be empty!' }
+            ];
+    
+           
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const errorElement = document.getElementById(`${field.id}Error`);
+                const value = input.value.trim();
+    
+                // const invalidStart = /^[*-+@$!^#0]/; 
+                const invalidStart = /^[*=@$!^#0\-\+\(\)\[\]]/;
+
+                if (!value) {
+                    errorElement.textContent = field.message;
+                    isValid = false;
+                } else if (value.length < 3) {
+                    errorElement.textContent = field.message + " Minimum 3 characters required.";
+                    isValid = false;
+                } else if (invalidStart.test(value)) {
+                    errorElement.textContent = field.message + " Cannot start with special characters or 0.";
+                    isValid = false;
+                } else if (field.id === "houseNo" && value === "000") {
+                    errorElement.textContent = "House No cannot be completely 0.";
+                    isValid = false;
+                } else {
+                    errorElement.textContent = ""; 
+                }
+            });
+    
+            
+            const isValidPincode = validatePincode();
+            console.log(isValidPincode);
+            if (!isValidPincode) {
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+    
+
+
+
+
+</body>
+</html>

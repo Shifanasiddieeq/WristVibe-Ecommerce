@@ -1,0 +1,245 @@
+
+body, h1, h2, h3, p, a, button, input, select, label {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    color: #333;
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  button {
+    cursor: pointer;
+  }
+  
+  .container {
+    display: flex;
+    gap: 20px;
+    margin: 40px auto;
+    max-width: 1200px;
+    padding: 20px;
+  }
+  
+  .cart-section {
+    flex: 3;
+  }
+  
+  .payment-section {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: #f9f9f9;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .login-btn {
+    padding: 10px 20px;
+    background: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .cart-table th,
+  .cart-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .cart-table img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }
+  
+  .qty-btn {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+  }
+  
+  .summary {
+    margin-top: 20px;
+  }
+  
+  .summary p,
+  .summary h3 {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .payment-method {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group-inline {
+    display: flex;
+    gap: 10px;
+  }
+  
+  input,
+  select,
+  button {
+    /* width: 100%; */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .checkout-btn {
+    background: #28a745;
+    color: #fff;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  /* Address Header Styles */
+  .address-header {
+    padding: 20px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .address-section {
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 615px;
+        margin-right: 10px;
+  }
+  
+  .address-section h3 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .address-card,
+  .add-address-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: 0.3s ease;
+    flex-direction: column;
+  }
+  
+  .address-card:hover,
+  .add-address-card:hover {
+    background: #f0f8ff;
+  }
+  
+  .address-card input[type="checkbox"],
+  .add-address-card input[type="checkbox"] {
+    margin-top: 6px;
+  }
+  
+  .address-card label,
+  .add-address-card label {
+    display: block;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .address-card p,
+  .add-address-card p {
+    margin: 5px 0;
+    font-size: 0.95rem;
+  }
+  
+  /* .custom-address-form {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  } */
+  
+  .custom-address-form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    margin-top: 15px;
+  }
+  
+  .custom-address-form .add-address-btn {
+    padding: 10px;
+    background: #28a745;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 15px;
+  }
+  
+  .custom-address-form .add-address-btn:hover {
+    background: #218838;
+  }
+  
+  /* Show custom address form when checkbox is checked */
+  .add-address-card input[type="checkbox"]:checked ~ .custom-address-form {
+    display: flex;
+  }
+  

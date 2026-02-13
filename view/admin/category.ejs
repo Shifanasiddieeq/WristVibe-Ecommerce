@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management</title>
+    <link rel="stylesheet" href="/style/admin/category.css">
+</head>
+
+<body>
+    <div class="admin-dashboard">
+        <aside class="sidebar">
+            <h2>Wrist Vibe</h2>
+            <nav>
+                <ul>
+                    <li><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="/admin/products">Products</a></li>
+                    <li><a href="/admin/users">Users</a></li>
+                    <li><a href="/admin/categories">Category</a></li>
+                    <li><a href="/admin/admin-order">Order</a></li>
+                    <li><a href="/admin/coupon">Coupon</a></li>
+                    <li><a href="/admin/offer">Offer</a></li>
+                    <li><a href="/admin/salesReport">Sales Report</a></li>
+
+                </ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <header>
+                <h1>Category</h1>
+                
+                <button class="add-btn" onclick="document.getElementById('addModal').style.display='flex'"
+                    style="width: 150px; height: 50px;">Add</button>
+
+            </header>
+            <section>
+
+                <% if (error) { %>
+                    <div class="error-message" style="color: red; margin-bottom: 10px;">
+                        <%= error %>
+                    </div>
+                    <% } %>
+                        <% if (success) { %>
+                            <div class="success-message" style="color: green; margin-bottom: 10px;">
+                                <%= success %>
+                            </div>
+                            <% } %>
+
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>NAME</th>
+                                            <th>DESCRIPTION</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% categories.forEach((category, index)=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= index + 1 %>
+                                                </td>
+                                                <td>
+                                                    <%= category.name %>
+                                                </td>
+                                                <td>
+                                                    <%= category.description %>
+                                                </td>
+                                                <td>
+                                                    <button class="edit-btn"
+                                                        onclick="editCategory('<%= category._id %>', '<%= category.name %>', '<%= category.description %>')">Edit</button>
+
+                                                    <button
+                                                        class="status-btn <%= category.isListed ? 'unlist' : 'list' %>"
+                                                        onclick="confirmToggleStatus('<%= category._id %>', '<%= category.isListed %>')">
+                                                        <%= category.isListed ? 'Unlist' : 'List' %>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+
+                                <div class="pagination">
+                                    <% if(currentPage>1){ %>
+                                        <a href="/admin/categories?page=<%=currentPage-1 %>">Previous</a>
+                                        <% } %>
+                                            <% for(let i=1 ; i<=totalPages ; i++){ %>
+                                                <a href="/admin/categories?page=<%=i %>"
+                                                    class="<%=i ===currentPage? 'active' : ''  %>">
+                                                    <%= i %>
+                                                </a>
+                                                <% } %>
+
+                                                    <% if(currentPage < totalPages) {%>
+                                                        <a
+                                                            href="/admin/categories? page= <%= currentPage + 1 %> ">Next</a>
+
+                                                        <% } %>
+                                </div>
+            </section>
+        </main>
+    </div>
+
+  
+
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h2>Add Category</h2>
+            <form id="addCategoryForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" >
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" ></textarea>
+                <button type="submit" class="save-btn">Add</button>
+                <button type="button" class="cancel-btn" onclick="document.getElementById('addModal').style.display='none'">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" onsubmit="return validateEditForm()">
+        <div class="modal-content">
+            <h2>Edit Category</h2>
+            <form id="editForm" action="/admin/categories" method="POST">
+                <label for="editName">Name:</label>
+                <input type="text" id="editName" name="name">
+                <label for="editDescription">Description:</label>
+                <textarea id="editDescription" name="description"></textarea>
+                <button type="submit" class="save-btn">Save</button>
+                <button type="button" class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        document.getElementById('addCategoryForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+    
+            const name = document.getElementById('name').value.trim();
+            const description = document.getElementById('description').value.trim();
+    
+            if (!name || !description) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Validation Error',
+                    text: 'Name and Description cannot be empty.',
+                });
+                return;
+            }
+    
+            try {
+                const response = await axios.post('/admin/categories', { name, description });
+                console.log(response);
+                
+                if (response.status === 200) {
+                    console.log('yys');
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Category added successfully!',
+                    })
+                    .then(res => {
+                        
+                        if(res.isConfirmed){
+                            console.log('lll');
+                            
+                            document.getElementById('addModal').style.display = 'none';
+                            location.reload();
+                        }
+                    })
+                  
+
+                }
+            } catch (error) {
+                console.log('hhh');
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.response?.data?.message || 'Failed to add category.',
+                });
+            }
+        });
+    </script>
+    <script>
+  
+
+        function validateEditForm() {
+            const name = document.getElementById('editName').value.trim();
+            const description = document.getElementById('editDescription').value.trim();
+            if (!name || !description) {
+                alert('Name and Description cannot be empty.');
+                return false;
+            }
+            return true;
+
+        }
+
+
+        function editCategory(id, name, description) {
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('editForm').action = `/admin/categories/${id}/edit`;
+            document.getElementById('editName').value = name;
+            document.getElementById('editDescription').value = description;
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+    </script>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmToggleStatus(categoryId, isListed) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to ${isListed === 'true' ? 'unlist' : 'list'} this category.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, do it!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/admin/categories/${categoryId}/toggle-status`;
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+
+    <style>
+        .pagination {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .pagination a {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination a:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+    </style>
+</body>
+
+</html>

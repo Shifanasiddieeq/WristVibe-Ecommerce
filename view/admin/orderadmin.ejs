@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+      .view-btn {
+      background-color: #ff4a4a;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .view-btn:hover {
+      background-color: #ff4a4a;
+    }
+
+    .pagination {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .pagination {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .pagination a {
+      display: inline-block;
+      margin: 0 5px;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      color: #333;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .pagination a.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .pagination a:hover {
+      background-color: #0056b3;
+      color: white;
+    }
+
+
+    .sidebar {
+      height: 100vh;
+      background-color: #39516c;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+    }
+
+    .logos {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ddd;
+    }
+
+ 
+
+    .menu {
+      list-style: none;
+      padding: 0;
+    }
+
+    .menu li {
+      margin-bottom: 10px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #eef2f4;
+      display: block;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .menu a:hover {
+      background-color: #e9ecef;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+
+      <aside class="col-md-3 col-lg-2 sidebar">
+        <div class="logos">Wrist Vibe</div>
+        <ul class="menu">
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+          <li><a href="/admin/products">Products</a></li>
+          <li><a href="/admin/users">Users</a></li>
+          <li><a href="/admin/categories">Category</a></li>
+          <li><a href="/admin/admin-order">Order</a></li>
+          <li><a href="/admin/coupon">Coupon</a></li>
+          <li><a href="/admin/offer">Offer</a></li>
+          <li><a href="/admin/salesReport">Sales Report</a></li>
+
+        </ul>
+      </aside>
+
+
+      <div class="col-md-9 col-lg-10 my-5">
+        <h1 id="details" class="mb-4">Order Details</h1>
+
+
+        <% if (orders && orders.length> 0) { %>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Status</th>
+                <th scope="col">Total Price</th>
+                <th scope="col">Payment Method</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+                <th scope="col">Orders</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(order=> { %>
+                <tr>
+                  <td>
+                    <%= order._id %>
+                  </td>
+                  <td>
+                    <%= order.customer.userName %>
+                  </td>
+                  <td id="status-<%= order._id %>">
+                    <%= order.status %>
+                      <% if(order.request.requested){ %>
+                        <button id="noti-btn-<%= order._id %>" class="noti-btn"
+                          onclick="notificationBtn('<%= order._id %>','<%= order.request.reason %>')"></button>
+                        <% } %>
+                  </td>
+                  <td>Rs.<%= order.totalPrice.toFixed(2) %>
+                  </td>
+                  <td>
+                    <%= order.paymentMethod %>
+                  </td>
+                  <td>
+                    <%= new Date(order.orderDate).toLocaleDateString() %>
+                  </td>
+                  <td>
+                    <form>
+                      <select data-id="<%= order._id %>" class="form-select" name="status"
+                        onchange="updateStatus('<%= order._id %>', this.value)" <% if (order.status==='Cancelled' ||
+                        order.status==='Delivered' || order.status==='Returned') { %> disabled <% } %> >
+                          <option value="Pending" <%=order.status==='Pending' ? 'selected' : '' %>>Pending</option>
+                          <option value="Shipped" <%=order.status==='Shipped' ? 'selected' : '' %>>Shipped</option>
+                          <option value="Delivered" <%=order.status==='Delivered' ? 'selected' : '' %>>Delivered
+                          </option>
+                          <option value="Cancelled" <%=order.status==='Cancelled' ? 'selected' : '' %>>Cancelled
+                          </option>
+                          <option value="Returned" <%=order.status==='Returned' ? 'selected' : '' %>>Returned</option>
+                      </select>
+                    </form>
+                  </td>
+                 <td> <button id="view-<% order._id %>" class="view-btn"
+                    onclick=" viewOrderDetailsAdmin('<%= order._id %>')" >View</button></td>
+                </tr>
+                <% }); %>
+            </tbody>
+
+
+          </table>
+
+          <div id="orderModalAdmin" class="modal">
+            <div class="modal-content">
+              <span class="close" onclick="closeModalAdmin()">&times;</span>
+              <h2>Order Details</h2>
+              <div id="orderDetailsAdmin"></div>
+            </div>
+          </div>
+          
+          <div class="pagination">
+            <% if (currentPage> 1) { %>
+              <a href="/admin/admin-order?page=<%= currentPage - 1 %>">Previous</a>
+              <% } %>
+
+                <% for (let i=1; i <=totalPages; i++) { %>
+                  <a href="/admin/admin-order?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>">
+                    <%= i %>
+                  </a>
+                  <% } %>
+
+                    <% if (currentPage < totalPages) { %>
+                      <a href="/admin/admin-order?page=<%= currentPage + 1 %>">Next</a>
+                      <% } %>
+          </div>
+          <% } else { %>
+            <p>No orders found.</p>
+            <% } %>
+
+
+
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
+      <script>
+        function viewOrderDetailsAdmin(orderId) {
+          fetch(`/admin/orderDetails/${orderId}`)
+            .then(response => response.json())
+            .then(data => {
+              const orderDetailsDiv = document.getElementById('orderDetailsAdmin');
+              orderDetailsDiv.innerHTML = `
+                <div class="order-section">
+                  <h3>Customer Details:</h3>
+                  <table>
+                    <tr><th>Name</th><td>${data.customer.userName}</td></tr>
+                    <tr><th>Email</th><td>${data.customer.email}</td></tr>
+                  </table>
+                </div>
+                <div class="order-section">
+                  <h3>Address:</h3>
+                  <table>
+                    <tr><th>House No</th><td>${data.customer.address.houseNo}</td></tr>
+                    <tr><th>Area</th><td>${data.customer.address.area}</td></tr>
+                    <tr><th>Landmark</th><td>${data.customer.address.landmark}</td></tr>
+                    <tr><th>Town</th><td>${data.customer.address.town}</td></tr>
+                    <tr><th>State</th><td>${data.customer.address.state}</td></tr>
+                    <tr><th>Pincode</th><td>${data.customer.address.pincode}</td></tr>
+                  </table>
+                </div>
+                <div class="order-section">
+                  <h3>Products:</h3>
+                  <table>
+                    <thead>
+                      <tr><th>Product Name</th><th>Price</th><th>Quantity</th><th>Total</th><th>Image</th></tr>
+                    </thead>
+                    <tbody>
+                      ${data.products.map(product => `
+                        <tr>
+                          <td>${product.productName}</td>
+                          <td>₹${product.price}</td>
+                          <td>${product.quantity}</td>
+                          <td>₹${product.total}</td>
+                          <td><img src="${product.image}" alt="${product.productName}" /></td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+                <div class="order-section">
+                  <h3>Coupon Discount:</h3><p>₹${data.couponDiscount || 0}</p>
+                </div>
+                <div class="order-section">
+                  <h3>Return Request:</h3>
+                  <p><strong>Requested:</strong> ${data.request.requested ? 'Yes' : 'No'}</p>
+                  ${data.request.requested ? `
+                    <p><strong>Request Name:</strong> ${data.request.requestname}</p>
+                    <p><strong>Reason:</strong> ${data.request.reason}</p>
+                    <p><strong>Approved:</strong> ${data.request.approve ? 'Yes' : 'No'}</p>
+                  ` : ''}
+                </div>
+              `;
+              openModalAdmin();
+            })
+            .catch(error => console.error('Error fetching order details:', error));
+        }
+      
+        function openModalAdmin() {
+          document.getElementById('orderModalAdmin').style.display = 'flex';
+        }
+      
+        function closeModalAdmin() {
+          document.getElementById('orderModalAdmin').style.display = 'none';
+        }
+      </script>
+      
+
+
+
+      <script>
+
+        function notificationBtn(orderId, reason) {
+          console.log(reason);
+
+          Swal.fire({
+            title: 'Return Request',
+            text: reason,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Approve',
+            cancelButtonText: 'Reject'
+          }).then((result) => {
+            if (result.isConfirmed) {
+
+              axios.post('/admin/approvReturnOrder', { orderId })
+                .then(res => {
+                  if (res.data.success) {
+                    Swal.fire({
+                      title: 'Success',
+                      text: 'The return request has been approved successfully!',
+                      icon: 'success',
+                      confirmButtonText: 'OK'
+                    })
+                      .then(resp => {
+                        document.getElementById(`noti-btn-${orderId}`).style.display = 'none'
+                        document.getElementById(`status-${orderId}`).innerHTML = 'Returned'
+                      })
+                  } else {
+                    Swal.fire({
+                      title: 'Error',
+                      text: res.data.message || 'Something went wrong!',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                    });
+                  }
+                })
+                .catch(error => {
+                  Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while processing the approval.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                  });
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+
+              Swal.fire({
+                title: 'Rejected',
+                text: 'The return request has been rejected.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+              });
+            }
+          }).catch(error => {
+            Swal.fire({
+              title: 'Error',
+              text: 'An error occurred while processing your request.',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          });
+        }
+
+
+      </script>
+      <script>
+        async function updateStatus(orderId, status) {
+          try {
+
+            const response = await axios.post(`/admin/adminOrder/${orderId}`, { status });
+
+            if (response.status === 200) {
+
+              if (response.data.status === 'Cancelled', response.data.status === 'Delivered') {
+                const selectElement = document.querySelector(`select[data-id="${orderId}"]`)
+                selectElement.disabled = true
+              }
+
+
+            } else {
+              alert('Failed to update order status. Please try again.');
+            }
+          } catch (error) {
+            console.error('Error updating status:', error);
+            alert('An error occurred while updating the order status.');
+          }
+        }
+      </script>
+
+
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+      <style>
+        .noti-btn {
+          background-color: red;
+          border: none;
+          border-radius: 50%;
+          width: 15px;
+          height: 15px;
+          cursor: pointer;
+          padding: 0;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          position: relative;
+        }
+
+        .noti-btn:hover {
+          background-color: darkred;
+        }
+
+        .noti-btn:active {
+          transform: scale(0.9);
+        }
+      </style>
+     
+
+ <style>
+
+ /* Modal Styling */
+ #orderModalAdmin {
+   display: none;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.7); /* Darker background for focus */
+   justify-content: center;
+   align-items: center;
+   z-index: 999;
+   padding: 20px;
+ }
+ 
+ .modal-content {
+   background-color: white;
+   padding: 30px;
+   border-radius: 8px;
+   width: 90%;
+   max-width: 950px;
+   max-height: 80%;  /* Adjusted to prevent overflow */
+   overflow-y: auto;  /* Makes content scrollable */
+   position: relative;
+   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+ }
+ 
+ .modal-content h2 {
+   text-align: center;
+   color: #333;
+   font-size: 24px;
+   margin-bottom: 20px;
+ }
+ 
+ .close {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   font-size: 24px;
+   font-weight: bold;
+   color: #333;
+   cursor: pointer;
+   background-color: transparent;
+   border: none;
+   transition: 0.3s;
+ }
+ 
+ .close:hover {
+   color: #f00;
+ }
+ 
+ .order-section h3 {
+   font-size: 18px;
+   font-weight: bold;
+   color: #333;
+   margin-bottom: 10px;
+ }
+ 
+ .order-section table {
+   width: 100%;
+   border-collapse: collapse;
+   margin-bottom: 20px;
+ }
+ 
+ .order-section th, .order-section td {
+   padding: 12px;
+   text-align: left;
+   border: 1px solid #ddd;
+   font-size: 16px;
+ }
+ 
+ .order-section th {
+   background-color: #f5f5f5;
+   color: #333;
+ }
+ 
+ .order-section td img {
+   width: 50px;
+   height: auto;
+   border-radius: 5px;
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .order-section p {
+   font-size: 16px;
+   color: #555;
+   margin-bottom: 10px;
+ }
+ 
+ .order-section p strong {
+   font-weight: bold;
+   color: #333;
+ }
+ 
+ .order-section .return-request {
+   margin-top: 10px;
+ }
+ 
+ /* Hover effects */
+ .order-section table tr:hover {
+   background-color: #f1f1f1;
+ }
+ 
+ .order-section td img:hover {
+   box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+ }
+ 
+ /* Mobile Responsiveness */
+ @media screen and (max-width: 768px) {
+   .modal-content {
+     width: 95%;
+     padding: 20px;
+   }
+ 
+   .order-section h3 {
+     font-size: 16px;
+   }
+ 
+   .order-section th, .order-section td {
+     padding: 10px;
+     font-size: 14px;
+   }
+ 
+   .order-section td img {
+     width: 40px;
+   }
+ }
+</style> 
+
+</body>
+
+</html>
