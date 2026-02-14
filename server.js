@@ -24,14 +24,14 @@ app.use(express.json())
 app.use(nocache())
 
 app.use(session({
-  secret: 'process.env.SESSION_SECRET',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24
   },
   store: MongoStore.create({
-    mongoUrl: 'process.env.MONGO_URL',
+    mongoUrl: process.env.MONGO_URL,
     collectionName: 'sessions',
     ttl: 24 * 60 * 60
   })
