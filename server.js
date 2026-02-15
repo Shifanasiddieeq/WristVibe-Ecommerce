@@ -22,13 +22,16 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(express.json())
 app.use(nocache())
-
+app.set('trust proxy', 1)
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24
+    maxAge: 1000 * 60 * 60 * 24,
+     secure: process.env.NODE_ENV === "production", // TRUE in Render
+    httpOnly: true,
+    sameSite: "none"
   },
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URL,
